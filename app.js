@@ -208,8 +208,55 @@ const createQuestions = (currentArr, priorArr) => {
   currentTitle.innerText = "Topic most recently completed";
   currentWrap.appendChild(currentTitle);
 
-  for (let i = 0; i < currentArr.length; i++) {
-    let questionObject = currentArr[i];
+  // for (let i = 0; i < currentArr.length; i++) {
+  //   let questionObject = currentArr[i];
+  //   const questionDiv = document.createElement("div");
+  //   questionDiv.classList.add("question_container");
+
+  //   let question = document.createElement("p");
+  //   question.innerText = questionObject["question"];
+  //   questionDiv.appendChild(question);
+
+  //   let answer = document.createElement("p");
+  //   answer.innerText = questionObject["answer"];
+  //   questionDiv.appendChild(answer);
+
+  //   currentWrap.appendChild(questionDiv);
+  // }
+
+  createQuestionCard(currentArr, currentWrap);
+  if (priorArr.length !== 0) {
+    const priorWrap = document.createElement("div");
+    priorWrap.classList.add("question_wrap");
+    wrapper.appendChild(priorWrap);
+
+    let priorTitle = document.createElement("h2");
+    priorTitle.classList.add("subtitle");
+    priorTitle.innerText = "Random completed topic";
+    priorWrap.appendChild(priorTitle);
+
+    // for (let i = 0; i < priorArr.length; i++) {
+    //   let questionObject = priorArr[i];
+    //   const questionDiv = document.createElement("div");
+    //   questionDiv.classList.add("question_container");
+
+    //   let question = document.createElement("p");
+    //   question.innerText = questionObject["question"];
+    //   questionDiv.appendChild(question);
+
+    //   let answer = document.createElement("p");
+    //   answer.innerText = questionObject["answer"];
+    //   questionDiv.appendChild(answer);
+
+    //   priorWrap.appendChild(questionDiv);
+    // }
+    createQuestionCard(priorArr, priorWrap);
+  }
+};
+
+const createQuestionCard = (arr, wrapper) => {
+  for (let i = 0; i < arr.length; i++) {
+    let questionObject = arr[i];
     const questionDiv = document.createElement("div");
     questionDiv.classList.add("question_container");
 
@@ -221,34 +268,7 @@ const createQuestions = (currentArr, priorArr) => {
     answer.innerText = questionObject["answer"];
     questionDiv.appendChild(answer);
 
-    currentWrap.appendChild(questionDiv);
-  }
-
-  if (priorArr.length !== 0) {
-    const priorWrap = document.createElement("div");
-    priorWrap.classList.add("question_wrap");
-    wrapper.appendChild(priorWrap);
-
-    let priorTitle = document.createElement("h2");
-    priorTitle.classList.add("subtitle");
-    priorTitle.innerText = "Random completed topic";
-    priorWrap.appendChild(priorTitle);
-
-    for (let i = 0; i < priorArr.length; i++) {
-      let questionObject = priorArr[i];
-      const questionDiv = document.createElement("div");
-      questionDiv.classList.add("question_container");
-
-      let question = document.createElement("p");
-      question.innerText = questionObject["question"];
-      questionDiv.appendChild(question);
-
-      let answer = document.createElement("p");
-      answer.innerText = questionObject["answer"];
-      questionDiv.appendChild(answer);
-
-      priorWrap.appendChild(questionDiv);
-    }
+    wrapper.appendChild(questionDiv);
   }
 };
 
