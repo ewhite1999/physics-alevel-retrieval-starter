@@ -24,7 +24,7 @@ const createDropDown = (divId, topic, selectId, optionsArr, eventListener) => {
   div.id = divId;
 
   let label = document.createElement("label");
-  label.innerText = `Choose a ${topic}:`;
+  label.innerText = `Choose the ${topic} most recently completed:`;
   label.htmlFor = selectId;
   label.classList.add("form_label");
   div.appendChild(label);
@@ -127,6 +127,7 @@ const selectNumber = () => {
   form.appendChild(div);
 };
 
+// A function to create the generate btn
 const generateBtn = () => {
   clearBtns();
   const form = document.querySelector(".form");
@@ -140,18 +141,174 @@ const generateBtn = () => {
   btn.innerText = "Generate!";
   div.appendChild(btn);
   form.appendChild(div);
+
+  // Preventing the default behavior of the form and handling the submit.
   form.onsubmit = function (e) {
     e.preventDefault();
-    // TODO: Add a function to generate Qs
+    let target = e.target;
+    handleSubmit(target);
   };
+};
+
+// What happens when the generate btn is pressed.
+const handleSubmit = async (target) => {
+  // getting the selected subtopic and n.o. Qs
+  let subTopic = target.querySelector("#subTopicSelect").value;
+  let numberOfQuestions = target.querySelector("#numberOfQs").value;
+  // getting how may of each question to show
+  let numberOfCurrentQs = (numberOfQuestions - (numberOfQuestions % 2)) / 2;
+  let numberOfOldQs = numberOfQuestions - numberOfCurrentQs;
+  // getting an object containing matching questions
+  let questionsObject = await getQuestions(subTopic);
+  let priorTopicQuestions = questionsObject["priorTopicQuestions"];
+  let currentTopicQuestions = questionsObject["currentTopicQuestions"];
+  // in case current topic is first topic
+  if (priorTopicQuestions.length === 0) {
+    numberOfCurrentQs = numberOfQuestions;
+    numberOfOldQs = 0;
+  }
+  // generating an array of random locations for Qs
+  let currentQsLocation = randomLocs(
+    currentTopicQuestions.length,
+    numberOfCurrentQs
+  );
+  let priorQsLocation = randomLocs(priorTopicQuestions.length, numberOfOldQs);
+
+  // Creating an array of the question/answer objects for each
+  let currentQuestionsToAsk = [];
+  for (let i = 0; i < currentQsLocation.length; i++) {
+    let index = currentQsLocation[i];
+    currentQuestionsToAsk.push(currentTopicQuestions[index]);
+  }
+
+  let priorQuestionsToAsk = [];
+  for (let i = 0; i < priorQsLocation.length; i++) {
+    let index = priorQsLocation[i];
+    priorQuestionsToAsk.push(priorTopicQuestions[index]);
+  }
+
+  createQuestions(currentQuestionsToAsk, priorQuestionsToAsk);
+};
+
+// A function to make the questions card
+const createQuestions = (currentArr, priorArr) => {
+  clearQuestions();
+  const container = document.querySelector(".container");
+
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("content_wrap");
+  container.appendChild(wrapper);
+
+  const currentWrap = document.createElement("div");
+  currentWrap.classList.add("question_wrap");
+  wrapper.appendChild(currentWrap);
+
+  let currentTitle = document.createElement("h2");
+  currentTitle.classList.add("subtitle");
+  currentTitle.innerText = "Topic most recently completed";
+  currentWrap.appendChild(currentTitle);
+
+  for (let i = 0; i < currentArr.length; i++) {
+    let questionObject = currentArr[i];
+    const questionDiv = document.createElement("div");
+    questionDiv.classList.add("question_container");
+
+    let question = document.createElement("p");
+    question.innerText = questionObject["question"];
+    questionDiv.appendChild(question);
+
+    let answer = document.createElement("p");
+    answer.innerText = questionObject["answer"];
+    questionDiv.appendChild(answer);
+
+    currentWrap.appendChild(questionDiv);
+  }
+
+  if (priorArr.length !== 0) {
+    const priorWrap = document.createElement("div");
+    priorWrap.classList.add("question_wrap");
+    wrapper.appendChild(priorWrap);
+
+    let priorTitle = document.createElement("h2");
+    priorTitle.classList.add("subtitle");
+    priorTitle.innerText = "Random completed topic";
+    priorWrap.appendChild(priorTitle);
+
+    for (let i = 0; i < priorArr.length; i++) {
+      let questionObject = priorArr[i];
+      const questionDiv = document.createElement("div");
+      questionDiv.classList.add("question_container");
+
+      let question = document.createElement("p");
+      question.innerText = questionObject["question"];
+      questionDiv.appendChild(question);
+
+      let answer = document.createElement("p");
+      answer.innerText = questionObject["answer"];
+      questionDiv.appendChild(answer);
+
+      priorWrap.appendChild(questionDiv);
+    }
+  }
+};
+
+// Generating a random int (max not included)
+const randomLocs = (max, num) => {
+  let i = 0;
+  let locs = [];
+  while (i < num) {
+    let randomNum = Math.floor(Math.random() * max);
+    if (locs.indexOf(randomNum) === -1) {
+      locs.push(randomNum);
+      i++;
+    }
+  }
+  return locs;
+};
+
+// Get question numbers.
+const getQuestions = async (subtopic) => {
+  // loading data
+  let data = await loadData();
+  const L = data.length;
+  let currentTopicQuestions = [];
+  let otherTopicQuestions = [];
+  let currentTopicQuestionsLoc = [];
+  // creating one array of current and one of all others
+  for (let i = 0; i < L; i++) {
+    let question = data[i]["Question"];
+    let answer = data[i]["Answer"];
+    let SUBtopic = data[i]["Sub-topic"];
+    if (data[i]["Sub-topic"] === subtopic) {
+      currentTopicQuestions.push({ question, answer, SUBtopic });
+      currentTopicQuestionsLoc.push(data[i]["No."]);
+    } else {
+      otherTopicQuestions.push({ question, answer, SUBtopic });
+    }
+  }
+  // finding the index of the first current topic
+  let cutOff = currentTopicQuestionsLoc[0] - 1;
+  // only returning prior topic Qs not all
+  let priorTopicQuestions = otherTopicQuestions.slice(0, cutOff);
+  return { priorTopicQuestions, currentTopicQuestions };
+};
+
+// Clear questions
+const clearQuestions = () => {
+  let questionWrapper = document.querySelectorAll(".content_wrap");
+  for (let i = 0; i < questionWrapper.length; i++) {
+    currentWrapper = questionWrapper[i];
+    currentWrapper.remove();
+  }
 };
 
 // Clear buttons
 const clearBtns = () => {
+  clearQuestions();
   let generateBtns = document.querySelectorAll("#generate_btn_div");
   for (let i = 0; i < generateBtns.length; i++) {
     currentBtn = generateBtns[i];
-    currentBtn.innerHTML = "";
+    currentBtn.remove();
   }
 };
 
@@ -161,7 +318,7 @@ const clearNum = () => {
   let numberInputs = document.querySelectorAll("#select_qs");
   for (let i = 0; i < numberInputs.length; i++) {
     currentNumInput = numberInputs[i];
-    currentNumInput.innerHTML = "";
+    currentNumInput.remove();
   }
 };
 
@@ -171,8 +328,9 @@ const clearSub = () => {
   let subtopicInputs = document.querySelectorAll("#select_subtopic_div");
   for (let i = 0; i < subtopicInputs.length; i++) {
     currentSubTopic = subtopicInputs[i];
-    currentSubTopic.innerHTML = "";
+    currentSubTopic.remove();
   }
 };
 
+// Start of with the choose topic
 populateTopic();
