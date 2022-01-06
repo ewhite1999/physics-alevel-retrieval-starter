@@ -2,8 +2,10 @@
 *,
 *::after,
 *::before {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
+
 :root {
   margin: 0;
   font-family: "Roboto", sans-serif;
@@ -16,30 +18,38 @@
 body {
   margin: inherit;
 }
+
 .container {
   margin: 2.625rem;
 }
+
 .title,
 .subtitle {
   font-family: "Roboto", sans-serif;
 }
+
 .title {
   font-weight: 700;
   font-size: 4rem;
   text-align: center;
-  span {
-    font-size: 3rem;
-  }
 }
+
+.title span {
+  font-size: 3rem;
+}
+
 .form_label {
   font-weight: 700;
 }
 
 .form_select,
 p {
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
   background-color: white;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   width: 100%;
   border: 2px solid var(--blue_border);
   border-radius: var(--border_radius);
@@ -49,18 +59,24 @@ p {
   color: var(--grey);
   text-overflow: ellipsis;
   font-weight: 600;
-  option {
-    color: black;
-  }
+}
+
+.form_select option,
+p option {
+  color: black;
 }
 
 #two_col {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  input {
-    max-width: 6em;
-    margin-right: 1.5em;
-  }
 }
+
+#two_col input {
+  max-width: 6em;
+  margin-right: 1.5em;
+}
+
 .subtitle {
   font-weight: 500;
   font-size: 2.25rem;
@@ -68,9 +84,11 @@ p {
 
 p {
   color: black;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .hidden {
   display: none;
 }
+/*# sourceMappingURL=style.css.map */
