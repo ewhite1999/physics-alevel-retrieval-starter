@@ -1,3 +1,12 @@
+// Creating a global event listener for the question/answer toggle
+document.addEventListener("click", (e) => {
+  if (e.target.matches("p")) {
+    let flashCard = e.target.parentNode;
+    flashCard.firstChild.classList.toggle("hidden");
+    flashCard.lastChild.classList.toggle("hidden");
+  }
+});
+
 // Load in the data.
 const loadData = async () => {
   let response = await fetch("./data.json");
@@ -113,34 +122,39 @@ const selectNumber = () => {
   const label = document.createElement("label");
   label.htmlFor = "numberOfQs";
   label.innerText = "How many questions? (4-10)";
+  div.appendChild(label);
+
+  const multiCol = document.createElement("div");
+  multiCol.id = "two_col";
+  div.appendChild(multiCol);
 
   const input = document.createElement("input");
   input.type = "number";
   input.id = "numberOfQs";
+  input.classList.add("form_select");
   input.name = "numberOfQs";
   input.min = 4;
   input.max = 10;
   input.addEventListener("input", generateBtn);
+  multiCol.appendChild(input);
 
-  div.appendChild(label);
-  div.appendChild(input);
+  // add in the btn
+
   form.appendChild(div);
 };
 
 // A function to create the generate btn
 const generateBtn = () => {
   clearBtns();
-  const form = document.querySelector(".form");
 
-  const div = document.createElement("div");
-  div.classList.add("form_control");
-  div.id = "generate_btn_div";
+  const form = document.querySelector(".form");
+  const multiCol = document.querySelector("#two_col");
 
   const btn = document.createElement("button");
-  btn.classList.add("btn", "form_btn");
+  btn.classList.add("btn", "form_btn", "form_select");
   btn.innerText = "Generate!";
-  div.appendChild(btn);
-  form.appendChild(div);
+  btn.id = "generate_btn_div";
+  multiCol.appendChild(btn);
 
   // Preventing the default behavior of the form and handling the submit.
   form.onsubmit = function (e) {
@@ -205,26 +219,11 @@ const createQuestions = (currentArr, priorArr) => {
 
   let currentTitle = document.createElement("h2");
   currentTitle.classList.add("subtitle");
-  currentTitle.innerText = "Topic most recently completed";
+  currentTitle.innerText = "Most Recent:";
   currentWrap.appendChild(currentTitle);
 
-  // for (let i = 0; i < currentArr.length; i++) {
-  //   let questionObject = currentArr[i];
-  //   const questionDiv = document.createElement("div");
-  //   questionDiv.classList.add("question_container");
-
-  //   let question = document.createElement("p");
-  //   question.innerText = questionObject["question"];
-  //   questionDiv.appendChild(question);
-
-  //   let answer = document.createElement("p");
-  //   answer.innerText = questionObject["answer"];
-  //   questionDiv.appendChild(answer);
-
-  //   currentWrap.appendChild(questionDiv);
-  // }
-
   createQuestionCard(currentArr, currentWrap);
+
   if (priorArr.length !== 0) {
     const priorWrap = document.createElement("div");
     priorWrap.classList.add("question_wrap");
@@ -232,24 +231,9 @@ const createQuestions = (currentArr, priorArr) => {
 
     let priorTitle = document.createElement("h2");
     priorTitle.classList.add("subtitle");
-    priorTitle.innerText = "Random completed topic";
+    priorTitle.innerText = "Random:";
     priorWrap.appendChild(priorTitle);
 
-    // for (let i = 0; i < priorArr.length; i++) {
-    //   let questionObject = priorArr[i];
-    //   const questionDiv = document.createElement("div");
-    //   questionDiv.classList.add("question_container");
-
-    //   let question = document.createElement("p");
-    //   question.innerText = questionObject["question"];
-    //   questionDiv.appendChild(question);
-
-    //   let answer = document.createElement("p");
-    //   answer.innerText = questionObject["answer"];
-    //   questionDiv.appendChild(answer);
-
-    //   priorWrap.appendChild(questionDiv);
-    // }
     createQuestionCard(priorArr, priorWrap);
   }
 };
@@ -266,6 +250,7 @@ const createQuestionCard = (arr, wrapper) => {
 
     let answer = document.createElement("p");
     answer.innerText = questionObject["answer"];
+    answer.classList.add("hidden");
     questionDiv.appendChild(answer);
 
     wrapper.appendChild(questionDiv);
