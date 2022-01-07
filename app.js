@@ -202,6 +202,7 @@ const handleSubmit = async (target) => {
   }
 
   createQuestions(currentQuestionsToAsk, priorQuestionsToAsk);
+  window.location.hash = "#question_anchor";
 };
 
 // A function to make the questions card
@@ -215,6 +216,7 @@ const createQuestions = (currentArr, priorArr) => {
 
   const currentWrap = document.createElement("div");
   currentWrap.classList.add("question_wrap");
+  currentWrap.id = "question_anchor";
   wrapper.appendChild(currentWrap);
 
   let currentTitle = document.createElement("h2");
