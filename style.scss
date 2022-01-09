@@ -11,6 +11,7 @@
   --blue_border: #0a65ed;
   --border_radius: 10px;
   --grey: #939393;
+  --invalid: #ed0a65;
   scroll-behavior: smooth;
 }
 body {
@@ -71,6 +72,11 @@ p {
 }
 .hidden {
   display: none;
+}
+#numberOfQs {
+  &:invalid {
+    border-color: var(--invalid);
+  }
 }
 
 @media screen and (min-width: 885px) {
