@@ -138,8 +138,6 @@ const selectNumber = () => {
   input.addEventListener("input", generateBtn);
   multiCol.appendChild(input);
 
-  // add in the btn
-
   form.appendChild(div);
 };
 
@@ -169,18 +167,22 @@ const handleSubmit = async (target) => {
   // getting the selected subtopic and n.o. Qs
   let subTopic = target.querySelector("#subTopicSelect").value;
   let numberOfQuestions = target.querySelector("#numberOfQs").value;
+
   // getting how may of each question to show
   let numberOfCurrentQs = (numberOfQuestions - (numberOfQuestions % 2)) / 2;
   let numberOfOldQs = numberOfQuestions - numberOfCurrentQs;
+
   // getting an object containing matching questions
   let questionsObject = await getQuestions(subTopic);
   let priorTopicQuestions = questionsObject["priorTopicQuestions"];
   let currentTopicQuestions = questionsObject["currentTopicQuestions"];
+
   // in case current topic is first topic
   if (priorTopicQuestions.length === 0) {
     numberOfCurrentQs = numberOfQuestions;
     numberOfOldQs = 0;
   }
+
   // generating an array of random locations for Qs
   let currentQsLocation = randomLocs(
     currentTopicQuestions.length,
@@ -202,6 +204,8 @@ const handleSubmit = async (target) => {
   }
 
   createQuestions(currentQuestionsToAsk, priorQuestionsToAsk);
+  // Auto-scrolling to the questions (the first empty one is needed for ios)
+  window.location.hash = "";
   window.location.hash = "#question_anchor";
 };
 
@@ -281,6 +285,7 @@ const getQuestions = async (subtopic) => {
   let currentTopicQuestions = [];
   let otherTopicQuestions = [];
   let currentTopicQuestionsLoc = [];
+
   // creating one array of current and one of all others
   for (let i = 0; i < L; i++) {
     let question = data[i]["Question"];
